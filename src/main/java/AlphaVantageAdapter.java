@@ -8,7 +8,8 @@ import java.time.format.DateTimeFormatter;
 
 public class AlphaVantageAdapter implements Alvo{
     @Override
-    public void cotacao(String codigoEmpresa) {
+    public double cotacao(String codigoEmpresa) {
+        double cotacao = 0;
         System.out.printf("Cotação da Empresa %s obtida pelo serviço Alpha Vantage: http://www.alphavantage.co%n", codigoEmpresa);
 
         /*
@@ -22,15 +23,16 @@ public class AlphaVantageAdapter implements Alvo{
 
         //Permite obter a cotação (quotes) de ações (stocks).
         StockQuotes stockQuotes = new StockQuotes(apiConnector);
-
         try {
             StockQuotesResponse response = stockQuotes.quote(codigoEmpresa);
             StockQuote stock = response.getStockQuote();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            cotacao = stock.getPrice();
             System.out.printf("Data: %s Preço: %s%n", formatter.format(stock.getLatestTradingDay()), stock.getPrice());
         } catch (AlphaVantageException e) {
             System.out.println("Erro ao solicitar cotação da empresa " + codigoEmpresa + ": " + e.getMessage());
         }
         System.out.println("---------------------------------------------------------------------");
+        return cotacao;
     }
 }
